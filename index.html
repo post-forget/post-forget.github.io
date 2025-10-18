@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Meta tags for social media banners, these should be filled in appropriatly as they are your "business card" -->
+  <!-- Replace the content tag with appropriate information -->
+  <meta name="description" content="Model similarity has negative effects on using LMs to judge or train other models; Unfortunately LMs are getting similar with increasing capabilities.">
+  <meta property="og:title" content="Great Models Think Alike and this Undermines AI Oversight"/>
+  <meta property="og:description" content="Model similarity has negative effects on using LMs to judge or train other models; Unfortunately LMs are getting similar with increasing capabilities."/>
+  <meta property="og:url" content="model-similarity.github.io"/>
+  <!-- Path to banner image, should be in the path listed below. Optimal dimenssions are 1200X630-->
+  <meta property="og:image" content="static/images/main_fig.png" />
+  <meta property="og:image:width" content="1200"/>
+  <meta property="og:image:height" content="630"/>
+
+
+  <meta name="twitter:title" content="Great Models Think Alike and this Undermines AI Oversight">
+  <meta name="twitter:description" content="We find model similarity has negative effects on using LMs to judge or train other models; Unfortunately LMs are getting similar with increasing capabilities.">
+  <!-- Path to banner image, should be in the path listed below. Optimal dimenssions are 1200X600-->
+  <meta name="twitter:image" content="static/images/main_fig.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <!-- Keywords for your paper to be indexed by-->
+  <meta name="keywords" content="Model similarity, AI oversight, LLM, Mistakes, Correlated failures, Affinity bias, LLM-as-a-judge, Weak-to-strong generalization, AI evaluations, AI training">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+  <title>Mapping Post-Training Forgetting in Language Models at Scale</title>
+  <link rel="icon" type="image/x-icon" href="static/images/favicon.ico">
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans" rel="stylesheet">
+
+  <link rel="stylesheet" href="static/css/bulma.min.css">
+  <link rel="stylesheet" href="static/css/bulma-carousel.min.css">
+  <link rel="stylesheet" href="static/css/bulma-slider.min.css">
+  <link rel="stylesheet" href="static/css/fontawesome.all.min.css">
+  <link rel="stylesheet"
+  href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="static/css/index.css">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://documentcloud.adobe.com/view-sdk/main.js"></script>
+  <script defer src="static/js/fontawesome.all.min.js"></script>
+  <script src="static/js/bulma-carousel.min.js"></script>
+  <script src="static/js/bulma-slider.min.js"></script>
+  <script src="static/js/index.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/plotly.js/2.26.0/plotly.min.js"></script>
+
+  <style>
+    * {
+      font-family: 'Google Sans', sans-serif !important;
+    }
+    
+    @media screen and (max-width: 768px) {
+      .publication-title {
+        font-size: 1.8rem !important;
+      }
+      .publication-authors {
+        font-size: 0.9rem !important;
+      }
+      .author-block {
+        display: inline-block;
+        margin-bottom: 0.5rem;
+      }
+      .link-block {
+        display: inline-block;
+        margin: 0.25rem;
+      }
+      .subtitle {
+        font-size: 0.9rem !important;
+      }
+      .content p {
+        font-size: 0.9rem;
+      }
+      img {
+        width: 100% !important;
+      }
+      .container {
+        padding: 1rem;
+      }
+    }
+
+/*  */
+        .instruction-box {
+            background-color: #e7f3ff;
+            border-left: 4px solid #2196F3;
+            padding: 16px 20px;
+            margin: 30px auto 40px auto;
+            max-width: 900px;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .instruction-box strong {
+            color: #1976D2;
+        }
+
+.plot-container {
+    border: none;
+    padding: 0; 
+    margin-bottom: 50px;
+    transition: box-shadow 0.3s ease;
+    max-width: 800px; 
+    margin-left: auto;
+    margin-right: auto; 
+}
+    
+        .plot-container:hover {
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.05);
+        }
+        
+        .plot-title {
+            font-size: 1.3em;
+            font-weight: 400;
+            margin-bottom: 12px;
+            color: #1a1a1a;
+            text-align: center;
+        }
+        
+        .plot-description {
+            font-size: 0.95em;
+            color: #666;
+            margin-bottom: 30px;
+            line-height: 1.7;
+            font-weight: 300;
+            text-align: center;
+        }
+
+.plot-iframe {
+    width: 100%;
+    max-width: 700px;  /* Match plot width */
+    height: 420px;  /* Match plot height + small buffer */
+    border: none;
+    border-radius: 8px;
+    overflow: hidden;  /* Hide scrollbars */
+    margin: 0 auto;  /* Center the iframe */
+    display: block;  /* Remove inline spacing */
+}
+
+@media screen and (max-width: 768px) {
+  .plot-iframe {
+    height: 380px;
+  }
+}
+
+        /* Placeholder styling */
+        .plot-placeholder {
+            width: 100%;
+            height: 600px;
+            background: #fafafa;
+        }
+  </style>
+</head>
+<body>
+
+
+  <section class="hero">
+    <div class="hero-body">
+      <div class="container is-max-desktop">
+        <div class="columns is-centered">
+          <div class="column has-text-centered">
+            <h1 class="title is-1 publication-title">Mapping Post-Training Forgetting in Language Models at Scale</h1>
+            <!-- <p>An empirical study on post-training forgetting in practice</p> -->
+            <div class="is-size-5 publication-authors">
+              <!-- Paper authors -->
+              <span class="author-block">
+                  <a href="https://github.com/shs2017" target="_blank">Jackson Harmon</a>,</span>
+                  <span class="author-block">
+                  <a href="https://github.com/libeanim" target="_blank">Andreas Hochlehnert</a>,</span>
+                  <span class="author-block">
+                  <a href="https://drimpossible.github.io" target="_blank">Ameya Prabhu</a>,</span>
+                  <span class="author-block">
+                  <a href="https://bethgelab.org" target="_blank">Matthias Bethge</a>,</span>
+              </div>
+
+              <div class="is-size-5 publication-authors">
+                <span class="author-block">
+                  Tübingen AI Center, University of Tübingen
+                </span>
+              </div>
+
+                  <div class="column has-text-centered">
+                    <div class="publication-links">
+                          <!-- Arxiv PDF link -->
+                      <span class="link-block">
+                        <a href="" target="_blank"
+                        class="external-link button is-normal is-rounded is-dark">
+                        <span class="icon">
+                          <img src="static/images/arxiv-logomark-small.svg" style="width: 1em; height: 1em;">
+                        </span>
+                        <span>Paper</span>
+                      </a>
+                    </span>
+
+                      <!-- Github link -->
+                      <span class="link-block">
+                        <a href="" target=""
+                        class="external-link button is-normal is-rounded is-dark">
+                        <span class="icon">
+                          <img src="static/images/github_mark.svg" width="24px" height="24px">
+                        </span>
+                        <span>Code (TDB)</span>
+                      </a>
+                    </span>
+ 
+                      <span class="link-block">
+                        <a href="" target=""
+                        class="external-link button is-normal is-rounded is-dark">
+                        <span class="icon">
+                          <img src="static/images/pypi_logo.png" width="24px" height="24px">
+                        </span>
+                        <span>Package (TBD)</span>
+                      </a>
+                    </span>
+
+                      <span class="link-block">
+                        <a href="" target=""
+                        class="external-link button is-normal is-rounded is-dark">
+                        <span class="icon">
+                          <img src="static/images/huggingface_logo-noborder.svg" width="24px" height="24px">
+                        </span>
+                        <span>Data (TDB)</span>
+                      </a>
+                    </span>
+
+                          
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+
+          <!-- Teaser video-->
+<section class="hero teaser">
+  <div class="container is-max-desktop">
+    <div class="hero-body">
+      <div style="text-align: center;">
+        <img src="static/images/post-training-forgetting-diagram.svg" 
+             alt="Main figure" 
+             style="width: 800px; max-width: 100%;">
+      </div>
+      <h2 class="subtitle has-text-justified">
+      <!-- Your commented text -->
+      </h2>
+    </div>
+  </div>
+</section>
+          <!-- End teaser video -->
+
+          <!-- Paper abstract -->
+          <section class="section hero is-light">
+            <div class="container is-max-desktop">
+              <div class="columns is-centered has-text-centered">
+                <div class="column is-four-fifths">
+                  <h2 class="title is-3">Abstract</h2>
+                  <div class="content has-text-justified">
+                    <p>Scaled post‑training now drives many of the largest capability gains in language models (LMs), yet its effect on pretrained knowledge remains poorly understood. Not all forgetting is equal: Forgetting one fact (e.g., a U.S. president or an API call) does not “average out” by recalling another. Hence, we propose a sample-wise paradigm to measure what is forgotten and when backward transfer occurs. Our metric counts 1→0 transitions (correct before post‑training, incorrect after) to quantify forgetting and 0→1 transitions to quantify backward transfer. Traditional task averages conflate these effects and obscure large changes. For multiple‑choice benchmarks, we add chance‑adjusted variants that subtract the expected contribution of random guessing from pre‑ and post‑training accuracies. We apply this framework across post‑training stages, model sizes, and data scales. Our large‑scale analysis shows that: (1) Domain-continual pretraining induces moderate forgetting with low-to-moderate backward backward transfer; (2) RL/SFT post-training applied to base models and Instruction tuning yields moderate-to-large backward transfer on math and logic with overall low-to-moderate forgetting; (3) Applying RL/SFT to instruction‑tuned models is sensitive on data scale: at small scales, both forgetting and backward transfer are small; at larger scales, effects are mixed and warrant further study with better controls; (4) Model merging does not reliably mitigate forgetting. Overall, our framework offers a practical yardstick for mapping how post‑training alters pretrained knowledge at scale -- enabling progress towards generally capable AI systems.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+          <!-- End paper abstract -->
+
+
+          <section class="hero teaser">
+            <div class="container is-max-desktop">
+              <h1 class="title is-3 has-text-centered" style="margin-top: 4rem;">High-Level Findings</h1>
+              <div class="hero-body">
+                <div style="text-align: center;">
+                  <!-- <img src="static/images/example_title_image.png" alt="Main figure" style="max-width: 82%; width: 100%;"> -->
+                   <!-- <img src="static/images/post-training-forgetting-diagram_v1.svg" alt="Main figure" style="max-width: 82%; width: 100%;"> -->
+                   <!-- <img src="static/images/post-training-forgetting-diagram_v2.svg" alt="Main figure" style="max-width: 82%; width: 100%;"> -->
+                   <img src="static/images/diagram.svg" alt="Main figure" style="max-width: 82%; width: 100%;">
+                </div>
+                <h2 class="subtitle has-text-justified">
+                  <p><b>Domain-Continual Pretraining:</b> induces low-to-moderate forgetting across most categories; backward transfer is limited. Scaling model size marginally decreases forgetting.</p>
+                  <p><b>Instruction-Tuning and SFT/RL from Base model:</b> yield low-to-moderate forgetting but moderate-to-large backward‑transfer, particularly in the Math and Logic categories, across model families; forgetting tends to decrease with increasing model scale. Reasoning training yields similar forgetting and larger backward transfer than instruction tuning.</p>
+                  <p><b>SFT/RL Reasoning Post-Training from Instruct model:</b> has data-scale dependent behaviour: For low‑data regime, it yields low forgetting and backward transfer. For high-data regime, no dominant factor robustly described the forgetting and backward transfer dynamics.</p>
+                  <p><b>Model Merging:</b> does not reliably mitigate forgetting across post-training pipelines (yet).</p>
+                </h2>
+              </div>
+            </div>
+          </section>
+
+<section class="hero is-small">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <h1 class="title is-3 has-text-centered">Metrics</h1>
+      <div class="content has-text-justified">
+        <p> 
+          We define <i>forgetting</i> as items that are answered correctly before a post-training stage but incorrectly afterward (the (1→0) transitions), and <i>backward transfer</i> as items that are answered incorrectly before but correctly after post-training (the (0→1) transitions). 
+          A further complication is that most knowledge-intensive LLM evaluation benchmarks are multiple-choice. Random guessing inflates accuracy and can create illusory transitions: an apparent (1→0) may simply be a lucky guess that later becomes an incorrect answer, even when the underlying knowledge did not change; 
+          likewise for (0→1) transitions. When the answer is only among few options (e.g., 4), performance by random guessing can account for a substantial share of observed transitions, distorting both level and trend estimates of forgetting. Thus a principled metric should:
+          <ul style="list-style-type: none; padding-left: 20px;">
+            <li>(i) Resolve outcomes at the <i>item</i> level</li>
+            <li>(ii) Explicitly correct for chance.</li>
+          </ul>
+
+          <!-- (i) resolve outcomes at the <i>item</i> level 
+
+          (ii) explicitly correct for chance. -->
+
+          We do this by estimating the probability of a chance correct answer <i>x</i> from the accuracy of the model <i>ā</i>, under an indepedence assumption, and then subtracting this from the sample-level answers, thereby yielding the estimated true accuracy <i>ā_true</i>.
+        </p>
+
+        <figure style="text-align: center; margin: 20px 0;">
+          <svg width="500" height="150" viewBox="0 0 500 150" xmlns="http://www.w3.org/2000/svg">
+            <!-- Main Rectangle -->
+            <rect x="50" y="60" width="400" height="50" fill="none" stroke="black" stroke-width="2.5"/>
+            
+            <!-- Vertical dividers -->
+            <line x1="316.67" y1="60" x2="316.67" y2="110" stroke="black" stroke-width="2.5"/>
+            <line x1="366.67" y1="60" x2="366.67" y2="110" stroke="black" stroke-width="2.5"/>
+            
+            <!-- Internal labels -->
+            <text x="183" y="92" font-size="24" text-anchor="middle" font-style="italic">ā</text>
+            <text x="205" y="106" font-size="16" text-anchor="middle">true</text>
+            <text x="341" y="92" font-size="24" text-anchor="middle" font-style="italic">x</text>
+            
+            <!-- Top braces -->
+            <!-- Left brace (for ā) -->
+            <path d="M 50 35 Q 50 30 55 30 L 361.67 30 Q 366.67 30 366.67 35" 
+                  fill="none" stroke="black" stroke-width="2.5"/>
+            <line x1="50" y1="35" x2="50" y2="45" stroke="black" stroke-width="2.5"/>
+            <line x1="366.67" y1="35" x2="366.67" y2="45" stroke="black" stroke-width="2.5"/>
+            <text x="208" y="20" font-size="24" text-anchor="middle" font-style="italic">ā</text>
+            
+            <!-- Right brace (for 1-ā) -->
+            <path d="M 366.67 35 Q 366.67 30 371.67 30 L 445 30 Q 450 30 450 35" 
+                  fill="none" stroke="black" stroke-width="2.5"/>
+            <line x1="366.67" y1="35" x2="366.67" y2="45" stroke="black" stroke-width="2.5"/>
+            <line x1="450" y1="35" x2="450" y2="45" stroke="black" stroke-width="2.5"/>
+            <text x="408" y="20" font-size="24" text-anchor="middle">1−<tspan font-style="italic">ā</tspan></text>
+          </svg>
+          <figcaption style="margin-top: 10px; font-size: 0.9rem; color: #4a4a4a; font-style: italic;">
+            Figure 1: Decomposition of observed accuracy showing true knowledge and guessing components.
+          </figcaption>
+        </figure>
+      </div>
+    </div>
+  </div>
+</section>
+          <!-- Findings -->
+            
+          
+          <section class="hero is-small">
+            <div class="hero-body">
+              <div class="container">
+                <h1 class="title is-3 has-text-centered">Experiments</h1>
+              </div>
+            </div>
+          </section>
+          
+          <div class="instruction-box">
+              <strong><i class="fas fa-lightbulb"></i> Interactive Plots:</strong> Categories can be hidden or displayed by clicking on their labels. Zooming into the plot is possible by clicking and dragging the mouse while under the zoom tool. Rotating the plot is also possible by clicking and dragging the axis.
+          </div>
+
+          <!-- Image sections -->
+          <section class="hero is-small">
+            <div class="hero-body">
+              <div class="container">
+                <div class="item" style="text-align: center; margin-bottom: 4rem;">
+
+                  <h1 class="title is-4 has-text-centered">
+                    <b>Domain Continual-Pretraining</b>
+                  </h1>
+
+                  <div class="plot-container">
+                      <iframe class="plot-iframe" 
+                              src="plots/few_shot/Task_Training_(All)_side_by_side_base.html" 
+                              scrolling="no"
+                              frameborder="0"
+                              loading="lazy">
+                      </iframe>
+                  </div>
+
+
+                  <h2 class="subtitle has-text-justified" style="max-width: 800px; margin: 0 auto;">
+                    Forgetting (left) and back-transfer (right) incurred by by domain continual-pretraining. Low-to-moderate forgetting across categories and model families with limited backtransfer; Scaling model size marginally reduces forgetting.
+                  </h2>
+                </div>
+
+                <div class="item" style="text-align: center; margin-bottom: 4rem;">
+                  <h1 class="title is-4 has-text-centered">
+                    <b>Instruction-Tuning</b>
+                  </h1>
+              
+                  <div class="plot-container">
+                      <iframe class="plot-iframe" 
+                              src="plots/few_shot/Instruction_Tuning_(All)_side_by_side_base.html" 
+                              scrolling="no"
+                              frameborder="0"
+                              loading="lazy">
+                      </iframe>
+                  </div>
+
+                  <!-- <img src="static/images/judgement_scores_vs_similarity.png" alt="Similarity vs Judgment scores plot" style="width: 100%; max-width: 50%; object-fit: contain; margin: 0 auto 20px auto;"/> -->
+                  <h2 class="subtitle has-text-justified" style="max-width: 800px; margin: 0 auto;">
+                    Forgetting (left) and back-transfer (right) incurred by reasoning training from instruction-tuning. There is low-to-moderate forgetting across most categories with moderate backward transfer in Math and Logic. Forgetting effects marginally improve with increasing model scale, whereas back-transfer tends to decrease.
+                    <!-- LLM-as-a-judge scores show <b>affinity bias</b> towards more similar models, after controlling for the evaluated model's capability. 
+                    For partial correlation and multiple regression analysis, checkout <a href="https://arxiv.org/abs/2502.04313">our paper</a>.  -->
+                  </h2>
+                </div>
+
+                <div class="item" style="text-align: center; margin-bottom: 4rem;">                
+                  <h1 class="title is-4 has-text-centered">
+                    <b>Reasoning Models from Base Models</b>
+                  </h1>
+                  <!-- <div class="plot-iframe-wrapper">
+                      <iframe class="plot-iframe" src="plots/few_shot/Trained_from_Base_(All)_SideBySide_base.html" scrolling="no"></iframe>
+                  </div> -->
+                  <div class="plot-container">
+                      <iframe class="plot-iframe" 
+                              src="plots/few_shot/Trained_from_Base_(All)_side_by_side_base.html" 
+                              scrolling="no"
+                              frameborder="0"
+                              loading="lazy">
+                      </iframe>
+                  </div>
+
+                  <!-- <img src="static/images/size_colored_by_family.png" alt="Similarilty increases as capabilities increase" style="width: 100%; max-width: 50%; object-fit: contain; margin: 20px auto 20px auto;"/> -->
+                  <h2 class="subtitle has-text-justified" style="max-width: 800px; margin: 0 auto;">
+                    Forgetting (left) and back-transfer (right) incurred by reasoning training from a base model. Generally yields overall generally low-to-moderate forgetting but large backward‑transfer gains across the Math and Logic categories and model families; both effects improve with increasing model scale. Reasoning training yields lower forgetting and larger backward transfer than instruction tuning.
+                    <!-- CAPA captures whether models make similar mistakes.
+                    By analzying 100+ open-weight models, we find that as model capabilities have increased, so has average CAPA to models from other developers in the same capability class. <br><br>
+                    <b>Implications</b>: If the trend of similarity increasing with capabilities continues, it could mean greater risks of affinity bias in evaluations, and lower gains from inter-LLM training.<br><br> -->
+                  </h2>
+                </div>
+
+                <div class="item" style="text-align: center; margin-bottom: 4rem;">
+                  <h1 class="title is-4 has-text-centered">
+                    <b>Reasoning Models from Instruction-Tuned Models (Low Data)</b>
+                  </h1>
+                  <!-- <img src="static/images/kappavsgain.png" alt="Similarity vs Gain from weak-to-strongn training plot" style="width: 100%; max-width: 50%; object-fit: contain; margin: 0 auto 20px auto;"/> -->
+                  <!-- <div class="plot-iframe-wrapper">
+                    <iframe class="plot-iframe" src="plots/few_shot/Trained_from_Instruct_-_Low_Data_Scenario_SideBySide.html" scrolling="no"></iframe>
+                  </div> -->
+                  <div class="plot-container">
+                      <iframe class="plot-iframe" 
+                              src="plots/few_shot/Trained_from_Instruct_-_Low_Data_Scenario_side_by_side.html" 
+                              scrolling="no"
+                              frameborder="0"
+                              loading="lazy">
+                      </iframe>
+                  </div>
+
+                  <h2 class="subtitle has-text-justified" style="max-width: 800px; margin: 0 auto;">
+                    Forgetting (left) and back-transfer (right) incurred by reasoning training from an instruction-tuned model on small amounts of data. Yields low forgetting and backward transfer. We also evaluate on behavioral benchmarks for this category (e.g. safety).
+                  </h2>
+                </div>                
+                
+                <div class="item" style="text-align: center; margin-bottom: 4rem;">
+                  <h1 class="title is-4 has-text-centered">
+                    <b>Reasoning Models from Instruction-Tuned Models (High Data)</b>
+                  </h1>
+                  <!-- <img src="static/images/kappavsgain.png" alt="Similarity vs Gain from weak-to-strongn training plot" style="width: 100%; max-width: 50%; object-fit: contain; margin: 0 auto 20px auto;"/> -->
+                  <!-- <div class="plot-iframe-wrapper">
+                      <iframe class="plot-iframe" src="plots/few_shot/Trained_from_Instruct_-_High_Data_Scenario_(All)_SideBySide.html" scrolling="no"></iframe>
+                  </div> -->
+                  <div class="plot-container">
+                      <iframe class="plot-iframe" 
+                              src="plots/few_shot/Trained_from_Instruct_-_High_Data_Scenario_(All)_side_by_side.html" 
+                              scrolling="no"
+                              frameborder="0"
+                              loading="lazy">
+                      </iframe>
+                  </div>
+                  <h2 class="subtitle has-text-justified" style="max-width: 800px; margin: 0 auto;">
+                    Forgetting (left) and back-transfer (right) incurred by reasoning training from an instruction-tuned model on large amounts of data. No dominant factor robustly described the forgetting and backward transfer dynamics. We also evaluate on behavioral benchmarks for this category (e.g. safety).
+                  </h2>
+                </div>
+
+              </div>
+            </div>
+          </section>
+          <!-- End image sections -->
+      
+
+
+          <!-- <section class="hero is-small">
+            <div class="hero-body">
+              <div class="container">
+                <h1 class="title is-3 has-text-centered">Model Merging as Mitigation?</h1>
+                <p>Test</p>
+              </div>
+            </div>
+          </section> -->
+
+
+      <section class="hero is-small">
+        <div class="hero-body">
+          <div class="container is-max-desktop">
+            <h1 class="title is-3 has-text-centered">Model Merging for Mitigation?</h1>
+            <div class="content has-text-justified">
+              <p> 
+                Recent work shows that offline model merging can combine capabilities from multiple models. Unlike classical continual learning, it requires neither the original training data nor the ability to resume training, which is practical in resource-constrained settings.
+              </p>
+              <p>
+                <b>Setup</b> We evaluate Exponential Moving Average (EMA) merging; in the two‑checkpoint case this is linear interpolation. Prior large‑scale studies find these simple schemes effective for continual learning with foundation models. Our experiments compare LERP and SLERP across OpenThinker‑7B, OpenThinker3‑7B,  and Qwen2.5‑Coder‑7B, together with their base checkpoints.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+          
+                
+          <section class="hero is-small">
+            <div class="hero-body">
+              <div class="container">
+                <h1 class="title is-3 has-text-centered">Experiments</h1>
+              </div>
+            </div>
+          </section>
+
+          <div class="instruction-box">
+              <strong><i class="fas fa-lightbulb"></i> Interactive Plots:</strong> Categories can be hidden or displayed by clicking on their labels. Zooming into the plot is possible by clicking and dragging the mouse while under the zoom tool. Rotating the plot is also possible by clicking and dragging the axis.
+          </div>
+
+          <!-- Image sections -->
+          <section class="hero is-small">
+            <div class="hero-body">
+              <div class="container">
+
+                <div class="item" style="text-align: center; margin-bottom: 4rem;">
+                  <h1 class="title is-4 has-text-centered">
+                    <b>Failure Case: Qwen2.5 and Qwen2.5 Coder Merge</b>
+                  </h1>
+                  <div class="plot-container">
+                      <iframe class="plot-iframe" 
+                              src="plots/few_shot/Few_Shot_Coder_Merge_Before_side_by_side_base.html" 
+                              scrolling="no"
+                              frameborder="0"
+                              loading="lazy">
+                      </iframe>
+                  </div>
+                  <h2 class="subtitle has-text-justified" style="max-width: 800px; margin: 0 auto;">
+                    Forgetting (left) and back-transfer (right) relative to the Qwen2.5 Base model.
+                  </h2>
+                  <div class="plot-container">
+                      <iframe class="plot-iframe" 
+                              src="plots/few_shot/Few_Shot_Coder_Merge_After_side_by_side_base.html" 
+                              scrolling="no"
+                              frameborder="0"
+                              loading="lazy">
+                      </iframe>
+                  </div>
+                  <h2 class="subtitle has-text-justified" style="max-width: 800px; margin: 0 auto;">
+                    Forgetting (left) and back-transfer (right) relative to the Qwen2.5 Coder model. In both cases large forgetting is observed. 
+                    Sample-level inspection shows words and phrases are often repeated without the model producing an answer.
+                  </h2>
+                </div>
+
+                <div class="item" style="text-align: center; margin-bottom: 4rem;">
+                  <h1 class="title is-4 has-text-centered">
+                    <b>Failure Case: Qwen2.5 Instruct and OpenThinker3 Merge</b>
+                  </h1>
+                  <div class="plot-container">
+                      <iframe class="plot-iframe" 
+                              src="plots/few_shot/OpenThinker3_7B_Merge_Before_side_by_side.html" 
+                              scrolling="no"
+                              frameborder="0"
+                              loading="lazy">
+                      </iframe>
+                  </div>
+                  <h2 class="subtitle has-text-justified" style="max-width: 800px; margin: 0 auto;">
+                    Forgetting (left) and back-transfer (right) relative to the Qwen2.5 Instruct model.
+                  </h2>
+                  <div class="plot-container">
+                      <iframe class="plot-iframe" 
+                              src="plots/few_shot/OpenThinker3_7B_Merge_After_side_by_side.html" 
+                              scrolling="no"
+                              frameborder="0"
+                              loading="lazy">
+                      </iframe>
+                  </div>
+                  <h2 class="subtitle has-text-justified" style="max-width: 800px; margin: 0 auto;">
+                    Forgetting (left) and back-transfer (right) relative to the OpenThinker3 model.
+                    Sample-level inspection shows words and phrases are often repeated without the model producing an answer.
+                  </h2>
+                </div>
+
+                <div class="item" style="text-align: center; margin-bottom: 4rem;">
+                  <h1 class="title is-4 has-text-centered">
+                    <b>Moderate Success Case: Qwen2.5 Instruct and OpenThinker Merge</b>
+                  </h1>
+                  <div class="plot-container">
+                      <iframe class="plot-iframe" 
+                              src="plots/few_shot/OpenThinker_7B_Merge_Before_side_by_side.html" 
+                              scrolling="no"
+                              frameborder="0"
+                              loading="lazy">
+                      </iframe>
+                  </div>
+                  <h2 class="subtitle has-text-justified" style="max-width: 800px; margin: 0 auto;">
+                    Forgetting (left) and back-transfer (right) relative to the Qwen2.5 Instruct model.
+                    We see marginal overall improvments for Linear (0.8).
+                  </h2>
+                  <div class="plot-container">
+                      <iframe class="plot-iframe" 
+                              src="plots/few_shot/OpenThinker_7B_Merge_After_side_by_side.html" 
+                              scrolling="no"
+                              frameborder="0"
+                              loading="lazy">
+                      </iframe>
+                  </div>
+                  <h2 class="subtitle has-text-justified" style="max-width: 800px; margin: 0 auto;">
+                    Forgetting (left) and back-transfer (right) relative to the OpenThinker3 model.
+                    We see marginal overall improvments for Linear (0.2) and Linear (0.8).
+                  </h2>
+                </div>
+
+              </div>
+            </div>
+          </section>
+
+
+
+      <!--BibTex citation -->
+        <section class="section" id="BibTeX">
+          <div class="container is-max-desktop content">
+            <h2 class="title">BibTeX</h2>
+            <pre><code>@misc{mapping-posttraining-forgetting,
+              title={TODO}, 
+              author={TODO},
+              year={TODO},
+              eprint={TODO},
+              archivePrefix={TODO},
+              primaryClass={TODO},
+              url={TODO}, 
+        }</code></pre>
+          </div>
+      </section>
+      <!--End BibTex citation -->
+
+
+        <footer class="footer py-2">
+        <div class="container">
+          <div class="columns">
+            <div class="column is-8">
+              <div class="content is-small has-text-right">
+                <p>
+                  This page was built using the <a href="https://github.com/eliahuhorwitz/Academic-project-page-template" target="_blank">Academic Project Page Template</a>.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </footer>
+
+      <!-- Statcounter tracking code -->
+        
+      <!-- You can add a tracker to track page visits by creating an account at statcounter.com -->
+
+          <!-- End of Statcounter Code -->
+
+        </body>
+        </html>

@@ -1,0 +1,221 @@
+<svg viewBox="0 0 1200 900" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <filter id="shadow">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-opacity="0.15"/>
+    </filter>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <polygon points="0 0, 10 3, 0 6" fill="#64748b"/>
+    </marker>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="1200" height="900" fill="#ffffff"/>
+  
+  <!-- Training Pipeline at top -->
+  <g transform="translate(150, 50)">
+    <!-- Base Model -->
+    <g transform="translate(0, 0)">
+      <rect x="0" y="0" width="140" height="70" rx="8" fill="#e2e8f0" stroke="#94a3b8" stroke-width="2"/>
+      <text x="70" y="40" font-family="'Google Sans', sans-serif" font-size="16" font-weight="600" text-anchor="middle" fill="#1e293b">
+        Base Model
+      </text>
+    </g>
+    
+    <!-- Arrow 1 -->
+    <line x1="150" y1="35" x2="240" y2="35" stroke="#64748b" stroke-width="2" marker-end="url(#arrow)"/>
+    <text x="195" y="25" font-family="'Google Sans', sans-serif" font-size="13" font-weight="500" text-anchor="middle" fill="#64748b">
+      Domain-adaptive
+    </text>
+    <text x="195" y="55" font-family="'Google Sans', sans-serif" font-size="13" font-weight="500" text-anchor="middle" fill="#64748b">
+      pretraining
+    </text>
+    
+    <!-- Domain Model -->
+    <g transform="translate(250, 0)">
+      <rect x="0" y="0" width="140" height="70" rx="8" fill="#e2e8f0" stroke="#94a3b8" stroke-width="2"/>
+      <text x="70" y="40" font-family="'Google Sans', sans-serif" font-size="16" font-weight="600" text-anchor="middle" fill="#1e293b">
+        Domain Model
+      </text>
+    </g>
+    
+    <!-- Arrow 2 -->
+    <line x1="400" y1="35" x2="490" y2="35" stroke="#64748b" stroke-width="2" marker-end="url(#arrow)"/>
+    <text x="445" y="25" font-family="'Google Sans', sans-serif" font-size="13" font-weight="600" text-anchor="middle" fill="#3b82f6">
+      Instruction
+    </text>
+    <text x="445" y="55" font-family="'Google Sans', sans-serif" font-size="13" font-weight="600" text-anchor="middle" fill="#3b82f6">
+      Tuning
+    </text>
+    
+    <!-- Instruction-Tuned Model -->
+    <g transform="translate(500, 0)">
+      <rect x="0" y="0" width="140" height="70" rx="8" fill="#e2e8f0" stroke="#94a3b8" stroke-width="2"/>
+      <text x="70" y="35" font-family="'Google Sans', sans-serif" font-size="15" font-weight="600" text-anchor="middle" fill="#1e293b">
+        Instruction-
+      </text>
+      <text x="70" y="52" font-family="'Google Sans', sans-serif" font-size="15" font-weight="600" text-anchor="middle" fill="#1e293b">
+        Tuned Model
+      </text>
+    </g>
+    
+    <!-- Arrow 3 -->
+    <line x1="650" y1="35" x2="740" y2="35" stroke="#64748b" stroke-width="2" marker-end="url(#arrow)"/>
+    <text x="695" y="25" font-family="'Google Sans', sans-serif" font-size="13" font-weight="500" text-anchor="middle" fill="#64748b">
+      Reasoning
+    </text>
+    <text x="695" y="55" font-family="'Google Sans', sans-serif" font-size="13" font-weight="500" text-anchor="middle" fill="#64748b">
+      Training
+    </text>
+    
+    <!-- Reasoning Model -->
+    <g transform="translate(750, 0)">
+      <rect x="0" y="0" width="140" height="70" rx="8" fill="#e2e8f0" stroke="#94a3b8" stroke-width="2"/>
+      <text x="70" y="35" font-family="'Google Sans', sans-serif" font-size="15" font-weight="600" text-anchor="middle" fill="#1e293b">
+        Reasoning
+      </text>
+      <text x="70" y="52" font-family="'Google Sans', sans-serif" font-size="15" font-weight="600" text-anchor="middle" fill="#1e293b">
+        Model
+      </text>
+    </g>
+  </g>
+  
+  <!-- Main visual: Two states side by side -->
+  <g transform="translate(0, 220)">
+    
+    <!-- BEFORE -->
+    <g transform="translate(50, 0)">
+      <text x="230" y="0" font-family="'Google Sans', sans-serif" font-size="24" font-weight="600" text-anchor="middle" fill="#1a1a1a">
+        Before Post-Training
+      </text>
+      
+      <!-- Grid of knowledge items -->
+      <g transform="translate(50, 50)">
+        <!-- Row 1 -->
+        <circle cx="50" cy="50" r="22" fill="#10b981" opacity="0.9"/>
+        <circle cx="120" cy="50" r="22" fill="#10b981" opacity="0.9"/>
+        <circle cx="190" cy="50" r="22" fill="#10b981" opacity="0.9"/>
+        <circle cx="260" cy="50" r="22" fill="#ef4444" opacity="0.9"/>
+        <circle cx="330" cy="50" r="22" fill="#10b981" opacity="0.9"/>
+        
+        <!-- Row 2 -->
+        <circle cx="50" cy="120" r="22" fill="#10b981" opacity="0.9"/>
+        <circle cx="120" cy="120" r="22" fill="#ef4444" opacity="0.9"/>
+        <circle cx="190" cy="120" r="22" fill="#10b981" opacity="0.9"/>
+        <circle cx="260" cy="120" r="22" fill="#10b981" opacity="0.9"/>
+        <circle cx="330" cy="120" r="22" fill="#ef4444" opacity="0.9"/>
+        
+        <!-- Row 3 -->
+        <circle cx="50" cy="190" r="22" fill="#10b981" opacity="0.9"/>
+        <circle cx="120" cy="190" r="22" fill="#10b981" opacity="0.9"/>
+        <circle cx="190" cy="190" r="22" fill="#ef4444" opacity="0.9"/>
+        <circle cx="260" cy="190" r="22" fill="#10b981" opacity="0.9"/>
+        <circle cx="330" cy="190" r="22" fill="#10b981" opacity="0.9"/>
+        
+        <!-- Row 4 -->
+        <circle cx="50" cy="260" r="22" fill="#ef4444" opacity="0.9"/>
+        <circle cx="120" cy="260" r="22" fill="#10b981" opacity="0.9"/>
+        <circle cx="190" cy="260" r="22" fill="#10b981" opacity="0.9"/>
+        <circle cx="260" cy="260" r="22" fill="#ef4444" opacity="0.9"/>
+        <circle cx="330" cy="260" r="22" fill="#10b981" opacity="0.9"/>
+      </g>
+    </g>
+    
+    <!-- Arrow -->
+    <g transform="translate(490, 180)">
+      <line x1="0" y1="0" x2="180" y2="0" stroke="#94a3b8" stroke-width="4"/>
+      <polygon points="180,-10 200,0 180,10" fill="#94a3b8"/>
+      <text x="90" y="-20" font-family="'Google Sans', sans-serif" font-size="18" font-weight="600" text-anchor="middle" fill="#64748b">
+        Post-Training
+      </text>
+    </g>
+    
+    <!-- AFTER -->
+    <g transform="translate(650, 0)">
+      <text x="240" y="0" font-family="'Google Sans', sans-serif" font-size="24" font-weight="600" text-anchor="middle" fill="#1a1a1a">
+        After Post-Training
+      </text>
+      
+      <!-- Grid of knowledge items with changes highlighted -->
+      <g transform="translate(50, 50)">
+        <!-- Row 1 -->
+        <circle cx="50" cy="50" r="22" fill="#10b981" opacity="0.9"/>
+        <!-- ANIMATED: Forgetting - green to red -->
+        <circle cx="120" cy="50" r="22" fill="#ef4444" opacity="0.9" stroke="#fbbf24" stroke-width="4">
+          <animate attributeName="stroke-opacity" values="1;0.3;1" dur="1.5s" repeatCount="indefinite"/>
+        </circle>
+        <circle cx="190" cy="50" r="22" fill="#10b981" opacity="0.9"/>
+        <!-- ANIMATED: Backward transfer - red to green -->
+        <circle cx="260" cy="50" r="22" fill="#10b981" opacity="0.9" stroke="#3b82f6" stroke-width="4">
+          <animate attributeName="stroke-opacity" values="1;0.3;1" dur="1.5s" repeatCount="indefinite"/>
+        </circle>
+        <circle cx="330" cy="50" r="22" fill="#10b981" opacity="0.9"/>
+        
+        <!-- Row 2 -->
+        <circle cx="50" cy="120" r="22" fill="#10b981" opacity="0.9"/>
+        <circle cx="120" cy="120" r="22" fill="#ef4444" opacity="0.9"/>
+        <!-- ANIMATED: Forgetting -->
+        <circle cx="190" cy="120" r="22" fill="#ef4444" opacity="0.9" stroke="#fbbf24" stroke-width="4">
+          <animate attributeName="stroke-opacity" values="1;0.3;1" dur="1.5s" repeatCount="indefinite"/>
+        </circle>
+        <circle cx="260" cy="120" r="22" fill="#10b981" opacity="0.9"/>
+        <!-- ANIMATED: Backward transfer -->
+        <circle cx="330" cy="120" r="22" fill="#10b981" opacity="0.9" stroke="#3b82f6" stroke-width="4">
+          <animate attributeName="stroke-opacity" values="1;0.3;1" dur="1.5s" repeatCount="indefinite"/>
+        </circle>
+        
+        <!-- Row 3 -->
+        <circle cx="50" cy="190" r="22" fill="#10b981" opacity="0.9"/>
+        <circle cx="120" cy="190" r="22" fill="#10b981" opacity="0.9"/>
+        <circle cx="190" cy="190" r="22" fill="#ef4444" opacity="0.9"/>
+        <circle cx="260" cy="190" r="22" fill="#10b981" opacity="0.9"/>
+        <circle cx="330" cy="190" r="22" fill="#10b981" opacity="0.9"/>
+        
+        <!-- Row 4 -->
+        <circle cx="50" cy="260" r="22" fill="#ef4444" opacity="0.9"/>
+        <circle cx="120" cy="260" r="22" fill="#10b981" opacity="0.9"/>
+        <circle cx="190" cy="260" r="22" fill="#10b981" opacity="0.9"/>
+        <circle cx="260" cy="260" r="22" fill="#ef4444" opacity="0.9"/>
+        <circle cx="330" cy="260" r="22" fill="#10b981" opacity="0.9"/>
+      </g>
+    </g>
+  </g>
+  
+  <!-- Key Transitions Explained -->
+  <g transform="translate(100, 650)">
+    <rect x="0" y="0" width="1000" height="150" rx="12" fill="#f8fafc" stroke="#e2e8f0" stroke-width="2" filter="url(#shadow)"/>
+    
+    <text x="500" y="35" font-family="'Google Sans', sans-serif" font-size="24" font-weight="700" text-anchor="middle" fill="#1a1a1a">
+      What Changed?
+    </text>
+    
+    <!-- Forgetting -->
+    <g transform="translate(100, 80)">
+      <circle cx="0" cy="0" r="18" fill="#10b981" opacity="0.9"/>
+      <text x="35" y="0" font-family="'Google Sans', sans-serif" font-size="20" fill="#64748b">→</text>
+      <circle cx="60" cy="0" r="18" fill="#ef4444" opacity="0.9" stroke="#fbbf24" stroke-width="4">
+        <animate attributeName="stroke-opacity" values="1;0.3;1" dur="1.5s" repeatCount="indefinite"/>
+      </circle>
+      <text x="90" y="8" font-family="'Google Sans', sans-serif" font-size="20" font-weight="600" fill="#1a1a1a">
+        10% Forgetting (1→0)
+      </text>
+      <text x="90" y="32" font-family="'Google Sans', sans-serif" font-size="15" fill="#64748b">
+        Was correct, now incorrect
+      </text>
+    </g>
+    
+    <!-- Backward Transfer -->
+    <g transform="translate(550, 80)">
+      <circle cx="0" cy="0" r="18" fill="#ef4444" opacity="0.9"/>
+      <text x="35" y="0" font-family="'Google Sans', sans-serif" font-size="20" fill="#64748b">→</text>
+      <circle cx="60" cy="0" r="18" fill="#10b981" opacity="0.9" stroke="#3b82f6" stroke-width="4">
+        <animate attributeName="stroke-opacity" values="1;0.3;1" dur="1.5s" repeatCount="indefinite"/>
+      </circle>
+      <text x="90" y="8" font-family="'Google Sans', sans-serif" font-size="20" font-weight="600" fill="#1a1a1a">
+        10% Backward Transfer (0→1)
+      </text>
+      <text x="90" y="32" font-family="'Google Sans', sans-serif" font-size="15" fill="#64748b">
+        Was incorrect, now correct
+      </text>
+    </g>
+  </g>
+</svg>

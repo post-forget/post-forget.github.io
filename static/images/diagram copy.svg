@@ -1,0 +1,95 @@
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="1200" height="630" viewBox="0 0 1200 630"
+     style="background:#fff;font-family:Google Sans, Arial, Helvetica, sans-serif">
+
+  <defs>
+    <!-- soft drop shadow for circles -->
+    <filter id="softShadow" x="-50%" y="-50%" width="200%" height="200%" filterUnits="userSpaceOnUse">
+      <feDropShadow dx="0" dy="6" stdDeviation="8" flood-color="#000" flood-opacity="0.12"/>
+    </filter>
+
+    <!-- arrow marker for axes -->
+    <marker id="axisArrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M0,0 L10,5 L0,10 Z" fill="#1b1b1b"/>
+    </marker>
+  </defs>
+
+  <!-- background -->
+  <rect x="0" y="0" width="1200" height="630" fill="#ffffff"/>
+
+  <!-- quadrant shading -->
+  <rect x="150" y="60" width="450" height="240" fill="#e6f6ee" opacity="0.95"/>
+  <rect x="600" y="300" width="450" height="240" fill="#fff0f0" opacity="0.95"/>
+
+  <!-- axes with small arrows -->
+  <line x1="150" y1="540" x2="1050" y2="540" stroke="#1b1b1b" stroke-width="6" stroke-linecap="round" marker-end="url(#axisArrow)"/>
+  <line x1="150" y1="540" x2="150" y2="60" stroke="#1b1b1b" stroke-width="6" stroke-linecap="round" marker-end="url(#axisArrow)"/>
+  <polygon points="1058,540 1046,534 1046,546" fill="#1b1b1b"/>
+  <polygon points="150,52 144,64 156,64" fill="#1b1b1b"/>
+  <text x="1050" y="585" font-size="24" font-weight="700" fill="#111" text-anchor="end">Forgetting</text>
+  <text x="95" y="60" font-size="24" font-weight="700" fill="#111" transform="rotate(-90 95 60)" text-anchor="end">Back-Transfer</text>
+
+  <!-- faint grid -->
+  <g stroke="#eef2f3" stroke-width="1">
+    <line x1="450" y1="540" x2="450" y2="60"/>
+    <line x1="750" y1="540" x2="750" y2="60"/>
+    <line x1="150" y1="360" x2="1050" y2="360"/>
+  </g>
+
+  <!-- data points (circles) with shadow filter -->
+  <g filter="url(#softShadow)">
+    <circle cx="320" cy="150" r="48" fill="#1e88e5"/>
+    <circle cx="350" cy="220" r="38" fill="#36b37e"/>
+    <circle cx="720" cy="430" r="46" fill="#ff9f43"/>
+    <circle cx="240" cy="310" r="34" fill="#9b59b6"/>
+    <circle cx="880" cy="300" r="42" fill="#f15bb5"/>
+  </g>
+
+  <!-- label boxes and leader lines -->
+
+  <!-- Reasoning from Base -->
+  <g>
+    <line x1="372" y1="150" x2="468" y2="140" stroke="#cfd6da" stroke-width="1.8" stroke-dasharray="4 3"/>
+    <!-- <rect x="456" y="100" width="340" height="56" rx="8" fill="#ffffff" fill-opacity="0.98"/> -->
+    <rect x="456" y="100" width="340" height="64" rx="8" fill="#ffffff" fill-opacity="0.98"/>
+    <text x="468" y="132" font-size="18" font-weight="700" fill="#0b0b0b">Reasoning from Base</text>
+    <text x="468" y="152" font-size="13" fill="#444">moderate forgetting &amp; back-transfer</text>
+  </g>
+
+  <!-- Instruction-Tuning -->
+  <g>
+    <line x1="378" y1="248" x2="440" y2="290" stroke="#cfd6da" stroke-width="1.8" stroke-dasharray="4 3"/>
+    <rect x="440" y="268" width="360" height="64" rx="8" fill="#ffffff" fill-opacity="0.98"/>
+    <text x="452" y="300" font-size="16" font-weight="700" fill="#0b0b0b">Instruction-Tuning</text>
+    <text x="452" y="320" font-size="13" fill="#444">moderate forgetting &amp; back-transfer</text>
+  </g>
+
+  <!-- Domain-Continual Pretraining -->
+  <g>
+    <line x1="764" y1="436" x2="844" y2="432" stroke="#cfd6da" stroke-width="1.8" stroke-dasharray="4 3"/>
+    <rect x="852" y="408" width="360" height="64" rx="8" fill="#ffffff" fill-opacity="0.98"/>
+    <text x="864" y="440" font-size="16" font-weight="700" fill="#0b0b0b">Domain-Continual Pretraining</text>
+    <text x="864" y="460" font-size="13" fill="#444">moderate forgetting, low back-transfer</text>
+  </g>
+
+  <!-- Reasoning from Instruct (low-data) -->
+  <g>
+    <line x1="270" y1="336" x2="352" y2="362" stroke="#cfd6da" stroke-width="1.8" stroke-dasharray="4 3"/>
+    <rect x="320" y="390" width="300" height="64" rx="8" fill="#ffffff" fill-opacity="0.98"/>
+    <text x="332" y="422" font-size="15" font-weight="700" fill="#0b0b0b">Reasoning from Instruct (low-data)</text>
+    <text x="332" y="442" font-size="13" fill="#444">(low forgetting, low back-transfer)</text>
+  </g>
+
+  <!-- Reasoning from Instruct (high-data) -->
+  <g>
+    <line x1="840" y1="264" x2="760" y2="236" stroke="#cfd6da" stroke-width="1.8" stroke-dasharray="4 3"/>
+    <rect x="640" y="180" width="420" height="64" rx="8" fill="#ffffff" fill-opacity="0.98"/>
+    <text x="652" y="212" font-size="16" font-weight="700" fill="#0b0b0b">Reasoning from Instruct (high-data)</text>
+    <text x="652" y="232" font-size="13" fill="#444">moderate→high forgetting; variable back-transfer</text>
+  </g>
+
+  <!-- footer note -->
+  <text x="150" y="612" font-size="12" fill="#666">
+    Less forgetting and back-transfer as scale increases
+  </text>
+</svg>
