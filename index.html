@@ -75,6 +75,21 @@
       .container {
         padding: 1rem;
       }
+      .teaser .container,
+      .teaser .hero-body {
+        max-width: 100% !important;
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+      }
+      .teaser .hero-body img {
+        width: 100vw !important;
+        max-width: none !important;
+        display: block;
+      }
+      .teaser .hero-body .subtitle {
+        padding-left: 1rem !important;
+        padding-right: 1rem !important;
+      }
     }
 
 /*  */
@@ -94,12 +109,13 @@
 
 .plot-container {
     border: none;
-    padding: 0; 
+    padding: 0;
     margin-bottom: 50px;
     transition: box-shadow 0.3s ease;
-    max-width: 800px; 
+    max-width: 800px;
     margin-left: auto;
-    margin-right: auto; 
+    margin-right: auto;
+    overflow-x: auto;
 }
     
         .plot-container:hover {
@@ -125,18 +141,32 @@
 
 .plot-iframe {
     width: 100%;
-    max-width: 700px;  /* Match plot width */
-    height: 420px;  /* Match plot height + small buffer */
+    max-width: 700px;
+    height: 420px;
     border: none;
     border-radius: 8px;
-    overflow: hidden;  /* Hide scrollbars */
-    margin: 0 auto;  /* Center the iframe */
-    display: block;  /* Remove inline spacing */
+    margin: 0 auto;
+    display: block;
 }
 
 @media screen and (max-width: 768px) {
   .plot-iframe {
-    height: 380px;
+    height: 350px;
+  }
+
+  .plot-container {
+    padding: 0;
+    margin-bottom: 30px;
+  }
+
+  figure svg {
+    width: 100% !important;
+    height: auto !important;
+  }
+
+  .instruction-box {
+    margin: 20px 1rem 30px 1rem;
+    font-size: 0.9rem;
   }
 }
 
@@ -241,8 +271,8 @@
   <div class="container is-max-desktop">
     <div class="hero-body">
       <div style="text-align: center;">
-        <img src="static/images/post-training-forgetting-diagram.svg" 
-             alt="Main figure" 
+        <img src="static/images/post-training-forgetting-diagram.svg"
+             alt="Main figure"
              style="width: 800px; max-width: 100%;">
       </div>
       <h2 class="subtitle has-text-justified">
@@ -277,7 +307,7 @@
                   <!-- <img src="static/images/example_title_image.png" alt="Main figure" style="max-width: 82%; width: 100%;"> -->
                    <!-- <img src="static/images/post-training-forgetting-diagram_v1.svg" alt="Main figure" style="max-width: 82%; width: 100%;"> -->
                    <!-- <img src="static/images/post-training-forgetting-diagram_v2.svg" alt="Main figure" style="max-width: 82%; width: 100%;"> -->
-                   <img src="static/images/diagram.svg" alt="Main figure" style="max-width: 82%; width: 100%;">
+                   <img src="static/images/diagram.svg" alt="Main figure" style="max-width: 100%; width: 100%; height: auto;">
                 </div>
                 <h2 class="subtitle has-text-justified">
                   <p><b>Domain-Continual Pretraining:</b> induces low-to-moderate forgetting across most categories; backward transfer is limited. Scaling model size marginally decreases forgetting.</p>
@@ -311,7 +341,7 @@
         </p>
 
         <figure style="text-align: center; margin: 20px 0;">
-          <svg width="500" height="150" viewBox="0 0 500 150" xmlns="http://www.w3.org/2000/svg">
+          <svg width="100%" style="max-width: 500px;" viewBox="0 0 500 150" xmlns="http://www.w3.org/2000/svg">
             <!-- Main Rectangle -->
             <rect x="50" y="60" width="400" height="50" fill="none" stroke="black" stroke-width="2.5"/>
             
@@ -655,10 +685,79 @@
       </footer>
 
       <!-- Statcounter tracking code -->
-        
+
       <!-- You can add a tracker to track page visits by creating an account at statcounter.com -->
 
           <!-- End of Statcounter Code -->
+
+      <script>
+        function resizePlotIframe(iframe) {
+          try {
+            var iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+            // Inject responsive styles so the chart fills the iframe width
+            if (!iframeDoc.getElementById('responsive-fix')) {
+              var style = iframeDoc.createElement('style');
+              style.id = 'responsive-fix';
+              style.textContent = 'html,body{margin:0;padding:0;width:100%;overflow:hidden;} .plotly-graph-div{width:100%!important;}';
+              iframeDoc.head.appendChild(style);
+            }
+            var Plotly = iframe.contentWindow.Plotly;
+            if (Plotly) {
+              var divs = iframeDoc.querySelectorAll('.plotly-graph-div');
+              divs.forEach(function(div) {
+                var w = iframe.clientWidth;
+                var isNarrow = w < 500;
+                if (isNarrow) {
+                  // Stack the two polar subplots vertically and make iframe taller
+                  Plotly.relayout(div, {
+                    'polar.domain.x': [0.0, 1.0],
+                    'polar.domain.y': [0.52, 1.0],
+                    'polar2.domain.x': [0.0, 1.0],
+                    'polar2.domain.y': [0.0, 0.48],
+                    'legend.y': -0.08,
+                    'margin.b': 60,
+                    height: 700
+                  });
+                  iframe.style.height = '720px';
+                } else {
+                  // Restore side-by-side layout
+                  Plotly.relayout(div, {
+                    'polar.domain.x': [0.0, 0.41],
+                    'polar.domain.y': [0.0, 1.0],
+                    'polar2.domain.x': [0.59, 1.0],
+                    'polar2.domain.y': [0.0, 1.0],
+                    'legend.y': -0.22,
+                    'margin.b': 85,
+                    height: 400
+                  });
+                  iframe.style.height = '420px';
+                }
+              });
+            }
+          } catch(e) {}
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+          var iframes = document.querySelectorAll('.plot-iframe');
+
+          iframes.forEach(function(iframe) {
+            iframe.addEventListener('load', function() {
+              resizePlotIframe(iframe);
+            });
+            // If already loaded (e.g. cached)
+            if (iframe.contentDocument && iframe.contentDocument.readyState === 'complete') {
+              resizePlotIframe(iframe);
+            }
+          });
+
+          // Re-resize on orientation change / window resize
+          window.addEventListener('resize', function() {
+            iframes.forEach(function(iframe) {
+              resizePlotIframe(iframe);
+            });
+          });
+        });
+      </script>
 
         </body>
         </html>
