@@ -151,7 +151,7 @@
 
 @media screen and (max-width: 768px) {
   .plot-iframe {
-    height: 350px;
+    height: 420px;
   }
 
   .plot-container {
@@ -706,31 +706,40 @@
               var divs = iframeDoc.querySelectorAll('.plotly-graph-div');
               divs.forEach(function(div) {
                 var w = iframe.clientWidth;
-                var isNarrow = w < 500;
+                var isNarrow = w < 600;
                 if (isNarrow) {
                   // Stack the two polar subplots vertically and make iframe taller
                   Plotly.relayout(div, {
                     'polar.domain.x': [0.0, 1.0],
-                    'polar.domain.y': [0.52, 1.0],
+                    'polar.domain.y': [0.55, 1.0],
                     'polar2.domain.x': [0.0, 1.0],
-                    'polar2.domain.y': [0.0, 0.48],
-                    'legend.y': -0.08,
-                    'margin.b': 60,
-                    height: 700
+                    'polar2.domain.y': [0.08, 0.52],
+                    'legend.y': -0.04,
+                    'legend.x': 0.5,
+                    'legend.xanchor': 'center',
+                    'margin.b': 200,
+                    height: 900
                   });
-                  iframe.style.height = '720px';
+                  iframe.style.height = '920px';
                 } else {
-                  // Restore side-by-side layout
+                  // Side-by-side layout
+                  // Count visible legend items to estimate how much wrapping will occur
+                  var legendItems = div._fullLayout && div._fullLayout.legend ?
+                    iframeDoc.querySelectorAll('.legend .traces').length : 9;
+                  var itemsPerRow = Math.max(1, Math.floor(w / 160));
+                  var legendRows = Math.ceil(legendItems / itemsPerRow);
+                  var legendHeight = Math.max(85, legendRows * 28 + 50);
+                  var chartHeight = 360 + legendHeight;
                   Plotly.relayout(div, {
                     'polar.domain.x': [0.0, 0.41],
                     'polar.domain.y': [0.0, 1.0],
                     'polar2.domain.x': [0.59, 1.0],
                     'polar2.domain.y': [0.0, 1.0],
                     'legend.y': -0.22,
-                    'margin.b': 85,
-                    height: 400
+                    'margin.b': legendHeight,
+                    height: chartHeight
                   });
-                  iframe.style.height = '420px';
+                  iframe.style.height = (chartHeight + 20) + 'px';
                 }
               });
             }
